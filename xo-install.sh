@@ -940,6 +940,15 @@ function VerifyServiceStart {
         echo "" >>"$LOGFILE"
         echo "$TASK succesful" >>"$LOGFILE"
         runcmd "/bin/systemctl enable $XO_SVC"
+        
+        # Custom banner removal script
+        if [[ "$XO_SVC" == "xo-server" ]] && [[ -x "$SCRIPT_DIR/xo-remove-banner.sh" || -f "$SCRIPT_DIR/xo-remove-banner.sh" ]]; then
+            echo
+            printinfo "Running custom banner removal script ($SCRIPT_DIR/xo-remove-banner.sh)"
+            runcmd "bash \"$SCRIPT_DIR/xo-remove-banner.sh\""
+            printok "Custom banner removal script finished"
+            echo
+        fi
         echo
     # if service startup failed...
     else
