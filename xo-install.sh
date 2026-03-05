@@ -861,7 +861,8 @@ function InstallXO {
     fi
 
     # Custom fork logic: configure XO5 as default UI
-    # Reference: https://github.com/vatesfr/xen-orchestra/blob/master/docs/doc  s/configuration.md#using-xo-5-as-the-default-interface
+    # Reference: https://github.com/vatesfr/xen-orchestra/blob/master/docs/docs/configuration.md#using-xo-5-as-the-default-interface
+    # Using 'http.publicMounts' instead of 'http.mounts' to allow the UI to load before authentication
     if [[ "$XO5_UI" == "true" ]] && [[ "$XO_SVC" == "xo-server" ]]; then
         printinfo "Configuring XO5 as the default interface"
         runcmd "mkdir -p $CONFIGPATH/.config/xo-server"
