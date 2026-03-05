@@ -863,20 +863,22 @@ function InstallXO {
     # Custom fork logic: configure XO5 as default UI
     # Reference: https://github.com/vatesfr/xen-orchestra/blob/master/docs/docs/configuration.md#using-xo-5-as-the-default-interface
     # Using 'http.publicMounts' instead of 'http.mounts' to allow the UI to load before authentication
-    if [[ "$XO5_UI" == "true" ]] && [[ "$XO_SVC" == "xo-server" ]]; then
-        printinfo "Configuring XO5 as the default interface"
-        runcmd "mkdir -p $CONFIGPATH/.config/xo-server"
-        runcmd "echo '[http.publicMounts]' > $CONFIGPATH/.config/xo-server/config.mounts.toml"
-        runcmd "echo \"'/' = '$INSTALLDIR/xo-web/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
-        runcmd "echo \"'/v5' = '$INSTALLDIR/xo-web/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
-        runcmd "echo \"'/v6' = '$INSTALLDIR/xo-web-v6/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
-        if [[ "$XOUSER" != "root" ]]; then
-            runcmd "chown $XOUSER:$XOUSER $CONFIGPATH/.config/xo-server/config.mounts.toml"
-        fi
-    elif [[ "$XO5_UI" == "false" ]] && [[ "$XO_SVC" == "xo-server" ]]; then
-        if [[ -f "$CONFIGPATH/.config/xo-server/config.mounts.toml" ]]; then
-            printinfo "Removing XO5 default interface configuration"
-            runcmd "rm -f $CONFIGPATH/.config/xo-server/config.mounts.toml"
+    if [[ "$XO_SVC" == "xo-server" ]]; then
+        if [[ "$XO5_UI" == "true" ]]; then
+            printinfo "Custom fork: Setting XO5 as the default user interface"
+            runcmd "mkdir -p $CONFIGPATH/.config/xo-server"
+            runcmd "echo '[http.publicMounts]' > $CONFIGPATH/.config/xo-server/config.mounts.toml"
+            runcmd "echo \"'/' = '$INSTALLDIR/xo-web/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
+            runcmd "echo \"'/v5' = '$INSTALLDIR/xo-web/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
+            runcmd "echo \"'/v6' = '$INSTALLDIR/xo-web-v6/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
+            if [[ "$XOUSER" != "root" ]]; then
+                runcmd "chown $XOUSER:$XOUSER $CONFIGPATH/.config/xo-server/config.mounts.toml"
+            fi
+        else
+            if [[ -f "$CONFIGPATH/.config/xo-server/config.mounts.toml" ]]; then
+                printinfo "Custom fork: Removing XO5 default interface configuration (reverting to XO6)"
+                runcmd "rm -f $CONFIGPATH/.config/xo-server/config.mounts.toml"
+            fi
         fi
     fi
 
