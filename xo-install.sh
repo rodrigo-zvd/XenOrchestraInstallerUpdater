@@ -1,4 +1,4 @@
-#!/bin/bash
+  #!/bin/bash
 # shellcheck disable=SC2155,SC2207,SC2015
 
 #########################################################################
@@ -53,6 +53,11 @@ INSTALL_REPOS="${INSTALL_REPOS:-"true"}"
 SYSLOG_TARGET="${SYSLOG_TARGET:-""}"
 YARN_CACHE_CLEANUP="${YARN_CACHE_CLEANUP:-"false"}"
 YARN_NETWORK_TIMEOUT="${YARN_NETWORK_TIMEOUT:-"300000"}"
+# Added by custom fork for banner removal logic
+REMOVE_BANNER="${REMOVE_BANNER:-"true"}"
+# Added by custom fork to configure XO5 as default UI
+# Reference: https://github.com/vatesfr/xen-orchestra/blob/master/docs/docs/configuration.md#using-xo-5-as-the-default-interface
+XO5_UI="${XO5_UI:-"false"}"
 
 # set variables not changeable in configfile
 TIME=$(date +%Y%m%d%H%M)
@@ -855,6 +860,25 @@ function InstallXO {
 
     fi
 
+    # Custom fork logic: configure XO5 as default UI
+    # Reference: https://github.com/vatesfr/xen-orchestra/blob/master/docs/docs/configuration.md#using-xo-5-as-the-default-interface
+    if [[ "$XO5_UI" == "true" ]] && [[ "$XO_SVC" == "xo-server" ]]; then
+        printinfo "Configuring XO5 as the default interface"
+        runcmd "mkdir -p $CONFIGPATH/.config/xo-server"
+        runcmd "echo '[http.mounts]' > $CONFIGPATH/.config/xo-server/config.mounts.toml"
+        runcmd "echo \"'/' = '$INSTALLDIR/xo-web/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
+        runcmd "echo \"'/v5' = '$INSTALLDIR/xo-web/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
+        runcmd "echo \"'/v6' = '$INSTALLDIR/xo-web-v6/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
+        if [[ "$XOUSER" != "root" ]]; then
+            runcmd "chown $XOUSER:$XOUSER $CONFIGPATH/.config/xo-server/config.mounts.toml"
+        fi
+    elif [[ "$XO5_UI" == "false" ]] && [[ "$XO_SVC" == "xo-server" ]]; then
+        if [[ -f "$CONFIGPATH/.config/xo-server/config.mounts.toml" ]]; then
+            printinfo "Removing XO5 default interface configuration"
+            runcmd "rm -f $CONFIGPATH/.config/xo-server/config.mounts.toml"
+        fi
+    fi
+
     echo
     # install/update is the same procedure so always symlink to most recent installation
     printinfo "Symlinking fresh xo-server install/update to $INSTALLDIR/xo-server"
@@ -941,8 +965,8 @@ function VerifyServiceStart {
         echo "$TASK succesful" >>"$LOGFILE"
         runcmd "/bin/systemctl enable $XO_SVC"
         
-        # Custom banner removal script
-        if [[ "$XO_SVC" == "xo-server" ]] && [[ -x "$SCRIPT_DIR/xo-remove-banner.sh" || -f "$SCRIPT_DIR/xo-remove-banner.sh" ]]; then
+        # Custom banner removal script - Added by custom fork
+        if [[ "$REMOVE_BANNER" == "true" ]] && [[ "$XO_SVC" == "xo-server" ]] && [[ -x "$SCRIPT_DIR/xo-remove-banner.sh" || -f "$SCRIPT_DIR/xo-remove-banner.sh" ]]; then
             echo
             printinfo "Running custom banner removal script ($SCRIPT_DIR/xo-remove-banner.sh)"
             runcmd "bash \"$SCRIPT_DIR/xo-remove-banner.sh\""
