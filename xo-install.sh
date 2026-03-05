@@ -861,11 +861,11 @@ function InstallXO {
     fi
 
     # Custom fork logic: configure XO5 as default UI
-    # Reference: https://github.com/vatesfr/xen-orchestra/blob/master/docs/docs/configuration.md#using-xo-5-as-the-default-interface
+    # Reference: https://github.com/vatesfr/xen-orchestra/blob/master/docs/doc  s/configuration.md#using-xo-5-as-the-default-interface
     if [[ "$XO5_UI" == "true" ]] && [[ "$XO_SVC" == "xo-server" ]]; then
         printinfo "Configuring XO5 as the default interface"
         runcmd "mkdir -p $CONFIGPATH/.config/xo-server"
-        runcmd "echo '[http.mounts]' > $CONFIGPATH/.config/xo-server/config.mounts.toml"
+        runcmd "echo '[http.publicMounts]' > $CONFIGPATH/.config/xo-server/config.mounts.toml"
         runcmd "echo \"'/' = '$INSTALLDIR/xo-web/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
         runcmd "echo \"'/v5' = '$INSTALLDIR/xo-web/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
         runcmd "echo \"'/v6' = '$INSTALLDIR/xo-web-v6/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
