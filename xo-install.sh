@@ -865,7 +865,7 @@ function InstallXO {
     # Using 'http.publicMounts' instead of 'http.mounts' to allow the UI to load before authentication
     if [[ "$XO_SVC" == "xo-server" ]]; then
         if [[ "$XO5_UI" == "true" ]]; then
-            printinfo "Custom fork: Setting XO5 as the default user interface"
+            printinfo "Setting XO5 as the default user interface"
             runcmd "mkdir -p $CONFIGPATH/.config/xo-server"
             runcmd "echo '[http.publicMounts]' > $CONFIGPATH/.config/xo-server/config.mounts.toml"
             runcmd "echo \"'/' = '$INSTALLDIR/xo-web/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
@@ -876,7 +876,7 @@ function InstallXO {
             fi
         else
             if [[ -f "$CONFIGPATH/.config/xo-server/config.mounts.toml" ]]; then
-                printinfo "Custom fork: Removing XO5 default interface configuration (reverting to XO6)"
+                printinfo "Removing XO5 default interface configuration (reverting to XO6)"
                 runcmd "rm -f $CONFIGPATH/.config/xo-server/config.mounts.toml"
             fi
         fi
