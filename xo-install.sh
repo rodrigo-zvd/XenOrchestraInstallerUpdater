@@ -1643,9 +1643,12 @@ function StartUpScreen {
 }
 
 # Protocol to use for webserver. If both of the X.509 certificate paths are defined,
-# then assume that we want to enable HTTPS for the server.
-if [[ -n "$PATH_TO_HTTPS_CERT" ]] && [[ -n "$PATH_TO_HTTPS_KEY" ]]; then
+# or if AUTOCERT/ACME is enabled, then assume that we want to enable HTTPS for the server.
+if [[ -n "$PATH_TO_HTTPS_CERT" ]] && [[ -n "$PATH_TO_HTTPS_KEY" ]] || [[ "$AUTOCERT" == "true" ]] || [[ "$ACME" == "true" ]]; then
     HTTPS=true
+    # Set default paths if they are empty but HTTPS is required by AUTOCERT or ACME
+    PATH_TO_HTTPS_CERT="${PATH_TO_HTTPS_CERT:-"$INSTALLDIR/xo.crt"}"
+    PATH_TO_HTTPS_KEY="${PATH_TO_HTTPS_KEY:-"$INSTALLDIR/xo.key"}"
 else
     HTTPS=false
 fi
