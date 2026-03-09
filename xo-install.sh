@@ -862,15 +862,14 @@ function InstallXO {
 
     # Custom fork logic: configure XO5 as default UI
     # Reference: https://github.com/vatesfr/xen-orchestra/blob/master/docs/docs/configuration.md#using-xo-5-as-the-default-interface
-    # Using 'http.publicMounts' instead of 'http.mounts' to allow the UI to load before authentication
     if [[ "$XO_SVC" == "xo-server" ]]; then
         if [[ "$XO5_UI" == "true" ]]; then
             printinfo "Setting XO5 as the default user interface"
             runcmd "mkdir -p $CONFIGPATH/.config/xo-server"
-            runcmd "echo '[http.publicMounts]' > $CONFIGPATH/.config/xo-server/config.mounts.toml"
+            runcmd "echo '[http.mounts]' > $CONFIGPATH/.config/xo-server/config.mounts.toml"
             runcmd "echo \"'/' = '$INSTALLDIR/xo-web/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
             runcmd "echo \"'/v5' = '$INSTALLDIR/xo-web/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
-            runcmd "echo \"'/v6' = '$INSTALLDIR/xo-web-v6/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
+            runcmd "echo \"'/v6' = '$INSTALLDIR/@xen-orchestra/web/dist/'\" >> $CONFIGPATH/.config/xo-server/config.mounts.toml"
             if [[ "$XOUSER" != "root" ]]; then
                 runcmd "chown $XOUSER:$XOUSER $CONFIGPATH/.config/xo-server/config.mounts.toml"
             fi
@@ -890,6 +889,8 @@ function InstallXO {
     runcmd "ln -sfn $INSTALLDIR/xo-builds/xen-orchestra-$TIME/packages/xo-web $INSTALLDIR/xo-web"
     printinfo "Symlinking fresh xo-web-v6 install/update to $INSTALLDIR/xo-web-v6"
     runcmd "ln -sfn $INSTALLDIR/xo-builds/xen-orchestra-$TIME/@xen-orchestra/web $INSTALLDIR/xo-web-v6"
+    runcmd "mkdir -p $INSTALLDIR/@xen-orchestra"
+    runcmd "ln -sfn $INSTALLDIR/xo-builds/xen-orchestra-$TIME/@xen-orchestra/web $INSTALLDIR/@xen-orchestra/web"
     printinfo "Symlinking fresh xo-cli install/update to $INSTALLDIR/xo-cli"
     runcmd "ln -sfn $INSTALLDIR/xo-builds/xen-orchestra-$TIME/packages/xo-cli $INSTALLDIR/xo-cli"
     printinfo "Symlinking xo-cli script to /usr/local/bin/xo-cli"
