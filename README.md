@@ -2,6 +2,21 @@
 
 This is a personal fork of the original [XenOrchestraInstallerUpdater](https://github.com/ronivay/XenOrchestraInstallerUpdater) project. It includes additional features for UI customization and automatic cleanup of trial banners for the community version.
 
+## Usage
+
+1.  Copy `sample.xo-install.cfg` to `xo-install.cfg`:
+    ```bash
+    cp sample.xo-install.cfg xo-install.cfg
+    ```
+2.  Uncomment and set your preferred fork features at the bottom of the file (using your preferred editor, e.g., `nano` or `vim`):
+    ```bash
+    nano xo-install.cfg
+    ```
+3.  Run the installation script as usual:
+    ```bash
+    sudo ./xo-install.sh
+    ```
+
 ## Fork Features
 
 This fork adds specific flags to `xo-install.cfg` (derived from `sample.xo-install.cfg`) to automate tasks that are usually manual or require specific configuration files.
@@ -56,14 +71,7 @@ To apply this fork's enhancements to an imported VM:
 
 *Note: If using the prebuilt VM image, SSH access is usually `xo` / `xopass`. Check the original project documentation for more details.*
 
-## Usage
 
-1.  Copy `sample.xo-install.cfg` to `xo-install.cfg`.
-2.  Uncomment and set your preferred fork features at the bottom of the file.
-3.  Run the installation script as usual:
-    ```bash
-    sudo ./xo-install.sh
-    ```
 
 ## Credits
 All the core installation and dependency logic belongs to the [original project](https://github.com/ronivay/XenOrchestraInstallerUpdater). This fork only adds convenience features for home users and enthusiasts.
