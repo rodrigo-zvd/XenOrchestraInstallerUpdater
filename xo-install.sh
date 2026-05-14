@@ -58,6 +58,9 @@ REMOVE_BANNER="${REMOVE_BANNER:-"true"}"
 # Added by custom fork to configure XO5 as default UI
 # Reference: https://github.com/vatesfr/xen-orchestra/blob/master/docs/docs/configuration.md#using-xo-5-as-the-default-interface
 XO5_UI="${XO5_UI:-"false"}"
+# Added by custom fork to configure custom logo
+CUSTOM_LOGO="${CUSTOM_LOGO:-"false"}"
+CUSTOM_LOGO_PATH="${CUSTOM_LOGO_PATH:-""}"
 
 # set variables not changeable in configfile
 TIME=$(date +%Y%m%d%H%M)
@@ -722,6 +725,21 @@ function InstallXO {
 
     echo
     printinfo "xo-server and xo-web build takes quite a while. Grab a cup of coffee and lay back"
+    
+    # Custom fork logic: replace logo before building
+    if [[ "$CUSTOM_LOGO" == "true" ]] && [[ -f "$CUSTOM_LOGO_PATH" ]]; then
+        echo
+        printinfo "Replacing Xen Orchestra logo with custom file: $CUSTOM_LOGO_PATH"
+        runcmd "cp -f \"$CUSTOM_LOGO_PATH\" \"$INSTALLDIR/xo-builds/xen-orchestra-$TIME/packages/xo-web/src/assets/logo.svg\""
+        if [[ -d "$INSTALLDIR/xo-builds/xen-orchestra-$TIME/@xen-orchestra/lite/src/assets" ]]; then
+            runcmd "cp -f \"$CUSTOM_LOGO_PATH\" \"$INSTALLDIR/xo-builds/xen-orchestra-$TIME/@xen-orchestra/lite/src/assets/logo.svg\""
+        fi
+        printok "Custom logo applied to source directories"
+    elif [[ "$CUSTOM_LOGO" == "true" ]] && [[ ! -f "$CUSTOM_LOGO_PATH" ]]; then
+        echo
+        printfail "CUSTOM_LOGO is set to true, but the specified file '$CUSTOM_LOGO_PATH' does not exist."
+    fi
+
     echo
     printprog "Running installation"
     runcmd "cd $INSTALLDIR/xo-builds/xen-orchestra-$TIME && yarn --network-timeout ${YARN_NETWORK_TIMEOUT} && yarn --network-timeout ${YARN_NETWORK_TIMEOUT} build"
