@@ -29,10 +29,10 @@ Starting with recent versions, Xen Orchestra defaults to the new v6 UI. This for
     *   Accessing `/v6` loads **XO 6**.
 
 ### 3. Custom Logo Replacement
-Allows you to replace the default Xen Orchestra logo with your own SVG file during the build process.
+Allows you to replace the default Xen Orchestra logo with your own image file during the build process.
 
 *   **Variable**: `CUSTOM_LOGO` & `CUSTOM_LOGO_PATH`
-*   **Options**: `true` / `false` (for the flag) and the absolute path to your `.svg` file.
+*   **Options**: `true` / `false` (for the flag) and the absolute path to your custom image file.
 *   **Default**: `false`
 *   **How it works**: When set to `true` with a valid file path, the installer replaces the source `logo.svg` files in the `xo-web` (and `xo-lite` if applicable) directories right before compiling the web assets with `yarn build`.
 
